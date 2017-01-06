@@ -14,16 +14,24 @@
     <div class="panel panel-default">
         <div class="panel-heading"><h4>Menu Choices</h4></div>
         <div class="panel-body">
-            <p>Please choose your menu options from the following choices for each of your guests:</p>
-            <h5><strong>Meat Menu</strong></h5>
+            <p>Please choose your menu options from the choices for each of your guests below:</p>
+            <h5><strong>Starters</strong></h5>
             <ul>
-                <li><strong>Smoked haddock kedgeree cake</strong>, poached hens egg, crisp winter salad and Bombay dressing</li>
-                <li><strong>Beer braised blade of beef</strong>, truffled mac ‘n’ cheese pave, roasted chantey carrots, sautéed spinach and beef cooking juices</li>
+                <li><strong>Tomato and Red Pepper Soup</strong>, served with basil oil and herb crouton (<strong>V</strong>)</li>
+                <li><strong>Caprese Salad</strong>, served with basil pesto drizzled with aged balsamic (<strong>V</strong>)</li>
+                <li><strong>Pork and Chicken Liver Pate</strong>, served with spiced fruit chutney and spring salad</li>
             </ul>
-            <h5><strong>Vegetarian Menu</strong></h5>
+            <h5><strong>Mains</strong></h5>
             <ul>
-                <li><strong>Wild mushroom and pine nuts</strong>, pickled mushroom, crispy shallots, wasabi crème, coriander cress (<strong>V</strong>)</li>
-                <li><strong>Butternut squash risotto</strong>, gorgonzola, toasted walnuts, olive oil, thyme braised endive, celeriac fondant, celeriac purée (<strong>V</strong>)</li>
+                <li><strong>Grilled Breast of Chicken, Marinated in Lemon and Garlic</strong><br/>Served with sautéed potatoes, green beans and vichy carrots with creamy tarragon jus</li>
+                <li><strong>Poached Pangasius Fish</strong><br/>Served with carrots, broccoli, saffron mash and chive cream sauce</li>
+                <li><strong>Oven Baked Chicken Supreme</strong><br/>Served with sauté potatoes, green beans, carrot and mushroom cream sauce</li>
+                <li><strong>Vegetarian Choice</strong><br/>To be confirmed.</li>
+            </ul>
+            <h5><strong>Desserts</strong></h5><ul>
+                <li><strong>Caramelized Apple and Raisin Bread and Butter Pudding</strong>, served with custard sauce (<strong>V</strong>)</li>
+                <li><strong>Lemon Meringue Pie</strong> (<strong>V</strong>)</li>
+                <li><strong>Trio Chocolate Delight</strong>, served with berry coulis (<strong>V</strong>)</li>
             </ul>
         </div>
     </div>
@@ -45,7 +53,7 @@
             @endif
             </td><td>
             @if ($member->ticket_purchaser_id == Auth::user()->id)
-              @include('dinner_groups.menu_choice', ['member' => $member, 'course' => 'main'])
+              @include('dinner_groups.menu_choice', ['member' => $member])
             @endif
             </td><td>
             @if ($member->ticket_purchaser_id == Auth::user()->id)

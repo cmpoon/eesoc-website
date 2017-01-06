@@ -9,7 +9,7 @@ class User extends Eloquent implements UserInterface, PresentableInterface {
     private $unclaimed_lockers_count;
 
     private $dinner_tickets_count;
-    private $unclaimed_dinner_tickets_count;
+    public $unclaimed_dinner_tickets_count;
 
     public static function boot()
     {

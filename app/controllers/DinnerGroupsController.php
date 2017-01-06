@@ -4,7 +4,7 @@ class DinnerGroupsController extends BaseController {
 
     const MAX_TABLES = 19;
 
-    protected $hasExpired = TRUE;
+    protected $hasExpired = FALSE; /* (time() >= strtotime("2017-01-13 23:59")); */
 
     public function __construct()
     {
@@ -18,7 +18,7 @@ class DinnerGroupsController extends BaseController {
 
             if ($this->hasExpired && !Auth::user()->is_admin) {
                 return Redirect::action('UsersController@getDashboard')
-                    ->with('danger', 'The period for choosing your seat has ended. Should you require further assistance, please <a href="mailto:eesoc.webmaster@imperial.ac.uk">email us</a>.');
+                    ->with('danger', 'The period for choosing your seat has ended. Should you require further assistance, please <a href="mailto:eesoc.events@imperial.ac.uk">email us</a>.');
             }
         });
     }
@@ -206,7 +206,21 @@ class DinnerGroupsController extends BaseController {
                 ->with('danger', 'You cannot remove that guest from their table.');
         }
 
+        if ($member->is_owner)
+        {
+            return Redirect::route('dashboard.dinner.groups.show', $oldGroup)
+                ->with('danger', 'You cannot leave from your own group.');
+        }
+        $group = $member->DinnerGroup();
+        $membersInGroup = $group->members()->count();
+
         $member->delete();
+
+        //If user was the last person to leave the group, delete the group as well.
+        if ($membersInGroup <= 1){
+            $group->delete();
+        }
+
 
         return Redirect::route('dashboard.dinner.groups.show', $oldGroup)
             ->with('success', 'Your guest was removed.');
@@ -234,38 +248,43 @@ class DinnerGroupsController extends BaseController {
     public function updateMenuChoice()
     {
         $member = DinnerGroupMember::findOrFail((integer) Input::get('member'));
-        $course = Input::get('course');
-        $choice = Input::get('choice');
+        $courses = [
+            "starter",
+            "main",
+            "dessert"
+        ];
 
-        switch ($course)
-        {
-        case 'starter':
-        case 'main':
-            $vName = "vegetarian_$course";
-            break;
+        foreach($courses as $course){
+            $vName = "choice_$course";
+            $choice = Input::get($vName);
 
-        default:
-            throw new \InvalidArgumentException("An invalid course type was specified.");
+            echo $vName." -> ".$choice;
+            //Choice validation
+            switch ($course)
+            {
+            case 'main':
+                if ($choice <= 4 && $choice >= 1){ break; }
+
+            case 'starter':
+            case 'dessert':
+                if ($choice <= 3 && $choice >= 1){ break; }
+
+            default:
+                return Redirect::route('dashboard.dinner.groups.show', $member->dinner_group->id)
+                    ->with('danger', 'Please select the menu choices all courses for '.$member->name.'.');
+                //throw new \InvalidArgumentException("An invalid choice was specified.");
+
+            }
+
+            $member->$vName = $choice;
         }
 
-        switch ($choice)
-        {
-        case 'meat':
-            $vegetarian = FALSE;
-            break;
 
-        case 'vegetarian':
-            $vegetarian = TRUE;
-            break;
+        $member->special_req = Input::get('special_req');
 
-        default:
-            throw new \InvalidArgumentException("An invalid choice was specified.");
-        }
-
-        $member->$vName = $vegetarian;
         $member->save();
 
         return Redirect::route('dashboard.dinner.groups.show', $member->dinner_group->id)
-            ->with('success', 'Menu choice updated.');
+            ->with('success', 'Thanks! The menu choice updated for '.$member->name.'.');
     }
 }

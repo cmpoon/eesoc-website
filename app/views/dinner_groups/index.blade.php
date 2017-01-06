@@ -2,7 +2,7 @@
 
 @section('content')
   <div class="page-header">
-    <h1>Dinner Seating & Meal Planner</h1>
+    <h1>New Year Dinner Seating & Meal Planner</h1>
   </div>
   @if ($user && ($unclaimed = $user->unclaimed_dinner_tickets_count))
       <h4 class="alert alert-info">
@@ -10,6 +10,7 @@
 
       @if (DinnerPermission::user(Auth::user())->canCreateNewGroup())
             You may either join one of the below groups, or you may <a href="{{ route('dashboard.dinner.groups.create') }}" class="btn btn-primary">Create A New Group</a>.
+            <b>Note: please make sure you do not create another group if you want to join a group, as you will not be able to leave your own group.</b>
       @else
             You may not currently create a new group as you are currently in a group; leave that group first.
       @endif
@@ -40,5 +41,5 @@
       </ul>
     </div>
   @endforeach
-  <p>If you experience any issues, please <a href='mailto:eesoc.webmaster@imperial.ac.uk'>email us</a></p>
+  <p>If you experience any issues, please <a href='mailto:eesoc.events@imperial.ac.uk'>email the Events Officers</a>.</p>
 @stop

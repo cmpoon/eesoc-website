@@ -1,6 +1,8 @@
 <?php
 
 class DinnerGroup extends Eloquent {
+
+    //Max size reduced for BAE delegate at the table
     const MAX_SIZE_REDUCED = 9;
     const MAX_SIZE_FULL    = 10;
     const REDUCED_COUNT    = 8;
@@ -31,12 +33,21 @@ class DinnerGroup extends Eloquent {
     {
         $actor  = $actor ? $actor : Auth::user();
         $member = new DinnerGroupMember;
+
+        $existingMembers = $this->members()->count();
+
         $member->DinnerGroup()->associate($this);
 
         if ($user instanceOf User)
         {
             $member->user()->associate($user);
             $member->is_owner = $user->id === $this->owner->id;
+
+            //If the group was left empty, then make the first member (again) the owner.
+            if ($existingMembers == 0){
+                $this->owner->id = $user->id;
+                $member->is_owner = true;
+            }
         }
         else
         {
@@ -93,7 +104,7 @@ class DinnerGroup extends Eloquent {
         $candidate = $owner->inGroup(self::$finalYearGroups, FALSE);
 
         if ($candidate &&
-            DinnerGroup::hasLimit(self::MAX_SIZE_REDUCED)->count() <                self::REDUCED_COUNT)
+            DinnerGroup::hasLimit(self::MAX_SIZE_REDUCED)->count() < self::REDUCED_COUNT)
         {
             return self::MAX_SIZE_REDUCED;
         }

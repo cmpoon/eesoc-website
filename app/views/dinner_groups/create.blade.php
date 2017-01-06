@@ -31,5 +31,5 @@
     {{ Form::submit('Save', ['class' => 'btn btn-primary']) }}
   {{ Form::close() }}
   <br />
-  <p>If you experience any issues, please <a href='mailto:eesoc.webmaster@imperial.ac.uk'>email us</a></p>
+  <p>If you experience any issues, please <a href='mailto:eesoc.events@imperial.ac.uk'>email the Events Officers</a>.</p>
 @stop

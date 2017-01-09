@@ -7,6 +7,8 @@ class DinnerGroup extends Eloquent {
     const MAX_SIZE_FULL    = 10;
     const REDUCED_COUNT    = 8;
 
+    const CAN_LEAVE_OWN_GRP = false;
+
     // 'Final year' group IDs from the live database (sorry...)
     protected static $finalYearGroups = [3, 4, 5, 7, 8, 11, 12, 13, 14];
 
@@ -34,7 +36,8 @@ class DinnerGroup extends Eloquent {
         $actor  = $actor ? $actor : Auth::user();
         $member = new DinnerGroupMember;
 
-        $existingMembers = $this->members()->count();
+        //$existingMembers = $this->members()->count();
+        $existingMembers = DinnerGroupMember::where('dinner_group_id','=',$this->id)->count();
 
         $member->DinnerGroup()->associate($this);
 
@@ -61,7 +64,25 @@ class DinnerGroup extends Eloquent {
 
     public function removeMember(User $user)
     {
-        $this->members()->where('user_id', '=', $user->id)->delete();
+        $member = $this->members()->where('user_id', '=', $user->id)->first();
+        $membersInGroup = DinnerGroupMember::where('dinner_group_id','=',$this->id)->count();
+
+        if ($member->is_owner  && !DinnerGroup::CAN_LEAVE_OWN_GRP)
+        {
+            return Redirect::route('dashboard.dinner.groups.show', $member->dinner_group_id)
+                ->with('danger', 'You cannot leave from your own group..');
+        }
+
+        $member->delete();
+
+        if ($membersInGroup <= 1){
+            $this->delete();
+
+            return Redirect::route('dashboard.dinner.groups.index')
+                ->with('success', 'You have left the group.');
+        }
+
+        return true;
     }
 
     public function isFull()

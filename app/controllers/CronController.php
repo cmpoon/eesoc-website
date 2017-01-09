@@ -75,7 +75,7 @@ class CronController extends BaseController {
             return Response::json(['success' => false, 'message' => 'Error signing in! Please check your username and password.']);
         }
 
-        $eactivities_client->changeRole(Input::get('role_key'));
+        //$eactivities_client->changeRole(Input::get('role_key'));
 
         $purchases = array_merge(
             $eactivities_client->getPurchasesList(Product::ID_EESOC_LOCKER), // EESoc Locker
@@ -85,7 +85,13 @@ class CronController extends BaseController {
         $emails_sent = 0;
 
         foreach ($purchases as $purchase) {
+
+            //eAcivities Update 2017 temp fix
+            $purchase['cid'] = $purchase['c_id/_card_number'];
+            $purchase['last_name'] = $purchase['surname'];
+
             $sale = Sale::find($purchase['order_no']);
+
             if (!$sale) {
                 $sale = new Sale;
                 $sale->id = $purchase['order_no'];

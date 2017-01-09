@@ -26,7 +26,7 @@
                 <li><strong>Grilled Breast of Chicken, Marinated in Lemon and Garlic</strong><br/>Served with sautéed potatoes, green beans and vichy carrots with creamy tarragon jus</li>
                 <li><strong>Poached Pangasius Fish</strong><br/>Served with carrots, broccoli, saffron mash and chive cream sauce</li>
                 <li><strong>Oven Baked Chicken Supreme</strong><br/>Served with sauté potatoes, green beans, carrot and mushroom cream sauce</li>
-                <li><strong>Vegetarian Choice</strong><br/>To be confirmed.</li>
+                <li><strong> Wild Mushroom and Asparagus Risotto</strong> (<strong>V</strong>)</li>
             </ul>
             <h5><strong>Desserts</strong></h5><ul>
                 <li><strong>Caramelized Apple and Raisin Bread and Butter Pudding</strong>, served with custard sauce (<strong>V</strong>)</li>
@@ -56,7 +56,7 @@
               @include('dinner_groups.menu_choice', ['member' => $member])
             @endif
             </td><td>
-            @if ($member->ticket_purchaser_id == Auth::user()->id)
+            @if ($member->ticket_purchaser_id == Auth::user()->id && (!$member->is_owner || DinnerGroup::CAN_LEAVE_OWN_GRP))
                 {{Form::open(['action' => ['DinnerGroupsController@removeMember']])}}
                 <button type="submit" name="remove" value="{{$member->id}}"  class="btn btn-danger">Remove</button>
                 {{Form::close()}}
@@ -69,7 +69,7 @@
     <hr>
 </div>
 <p>
-<?php $user = Auth::user(); ?>
+<?php $user = Auth::user(); $user->getUnclaimedDinnerTicketsCountAttribute(); ?>
 @if ($user->unclaimed_dinner_tickets_count > 1 || ($user->dinnerGroupMember && $user->unclaimed_dinner_tickets_count == 1))
 {{Form::open(['action' => ['DinnerGroupsController@addMember']])}}
 <div class="input-group col-xs-4" style="padding-left: 0;">

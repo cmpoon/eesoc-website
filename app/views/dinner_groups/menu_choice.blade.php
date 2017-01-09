@@ -14,7 +14,7 @@
           1 => "Grilled Breast of Chicken",
           2 => "Poached Pangasius Fish",
           3 => "Oven Baked Chicken Supreme",
-          4 => "Vegetarian Choice (V)"
+          4 => "Wild Mushroom and Asparagus Risotto (V)"
       ],"dessert" => [
           1 => "Caramelized Apple and Raisin Bread and Butter Pudding",
           2 => "Lemon Meringue Pie",
